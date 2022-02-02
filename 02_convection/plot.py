@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load the columns of the csv file
+# First column [0] is viscosity, second column [1] is temperature variations
+# Third column [2] is velocity at second to the last time step
+# Fourth column[3] is velocity at the last time step# Load the columns of the csv file
 x = np.genfromtxt('onset-convection-data.csv', dtype=float, delimiter=' ', usecols = (0))
 y = np.genfromtxt('onset-convection-data.csv', dtype=float, delimiter=' ', usecols = (1))
 z1 = np.genfromtxt('onset-convection-data.csv', dtype=float, delimiter=' ', usecols = (2))

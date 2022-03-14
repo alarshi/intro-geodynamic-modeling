@@ -10,6 +10,7 @@ set End time                               = 3.8e7
 set CFL number                             = 1.0
 set Use years in output instead of seconds = true
 set Output directory                       = cascadia
+set Resume computation                     = true
 
 # This nonlinear solver scheme solver once for temperature
 # and composition per time step, and then iterates out

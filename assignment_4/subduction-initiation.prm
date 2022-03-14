@@ -118,7 +118,7 @@ end
 # Slab dip angle, trench position and plate ages
 # can be varied.
 subsection Initial temperature model
-  set List of model names = adiabatic, function
+  set List of model names = adiabatic , function
 
   subsection Adiabatic
     set Age top boundary layer = 0
@@ -131,21 +131,22 @@ subsection Initial temperature model
 
   subsection Function
     set Function constants =y0=300000, x_trench=700000.0, Ts=293, Tm=1573, age=1.4e8, yr_in_s=31557600
-    set Function expression = \
-       (Ts-Tm)*erfc(0.5*(y0-y)/sqrt(1.0e-6*(1 - (1 - age/2e8) * 0.5 * (1 + tanh((x_trench-x)/100000))) * 2e8 * yr_in_s));
+    set Function expression =  \
+       (Ts - Tm)*erfc(0.5*(y0-y)/sqrt(1.0e-6*(1 - (1 - age/2e8) * 0.5 * (1 + tanh((x_trench-x)/100000))) * 2e8 * yr_in_s));
   end
 end
 
 subsection Boundary temperature model
-  set Model name = box
+  set Model name = initial temperature
   set Fixed temperature boundary indicators   = top, bottom
   set Allow fixed temperature on outflow boundaries = false
 
-  subsection Box
-    set Bottom temperature = 1728 #0.25C/km 
-    set Top temperature = 293
+  subsection Initial temperature
+    set Maximal temperature = 1728 #0.25C/km
+    set Minimal temperature = 293
   end
 end
+
 
 subsection Boundary velocity model
   set Tangential velocity boundary indicators = left, top, left lithosphere

@@ -20,7 +20,7 @@ set Start time                             = 0
 set End time                               = 1e9 
 set CFL number                             = 0.5
 set Use years in output instead of seconds = true
-set Output directory                       = subduction-initiation-2
+set Output directory                       = subduction-initiation
 set Pressure normalization                 = surface
 set Maximum first time step                = 1500
 set Maximum relative increase in time step = 100
@@ -171,7 +171,7 @@ end
 
 subsection Compositional fields
    set Number of fields = 4
-   set Names of fields  = continental_lithosphere, oceanic_lithosphere, crust, weakness
+   set Names of fields  = continental_lithospheric_mantle, oceanic_lithospheric_mantle, crust, weakness
 end
 
 subsection Material model
@@ -221,7 +221,7 @@ subsection Material model
     set Activation volumes for diffusion creep    = 4e-6,4e-6,4e-6,0,4e-6
 
     # Plasticity parameters
-    set Angles of internal friction = 20,30,30,20,10
+    set Angles of internal friction = 20,30,30,20,0
     set Cohesions                   = 20.e6,20.e6,20.e6,5.e6,20.e6 
 
   end
@@ -244,7 +244,7 @@ subsection Initial composition model
       if (y0-y < 10400 + 25000 * 0.5 * (1 + tanh((x-x_trench)/100000)) \
           , 1, 0); \
       if (y0-y < 170000 && y0-y > 15000 \
-          , exp(-((x-x_trench+100000)-(y0-y))^2/5000^2),0)
+          , exp(-((x-x_trench+80000)-(y0-y))^2/5000^2),0)
   end
 end
 

@@ -132,7 +132,7 @@ subsection Boundary temperature model
 
   subsection Function
     set Function constants = x_plume=1800000, plume_width=100000, T_plume=200
-    set Function expression = T_plume*exp(-((x-x_plume)^2+y^2)/plume_width^2)
+    set Function expression = T_plume*exp(-((x-x_plume)^2+y^2)/plume_width^2) + 1740
   end
 end
 

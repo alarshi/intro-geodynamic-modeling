@@ -4,6 +4,16 @@
 # - young slab being subducted
 # - flat subduction
 
+# Important model parameters could be the position (parameter "x_plume" in
+# the subsections Boundary velocity model and Boundary temperature model;
+# you will need to change both together so that material flows into the 
+# model at the same location where the temperature is increased) 
+# and temperature (parameter "T_plume" in the subsection Boundary temperature 
+# model) of the plume, but also the strength of the subducting plate 
+# (third value in the lists of "Prefactors for diffusion creep" and 
+# "Activation energies for diffusion creep", this is explained in more detail
+# in the Material model subsection). 
+
 set Dimension                              = 2
 set Start time                             = 0
 set End time                               = 4.5e7

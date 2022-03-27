@@ -4,9 +4,19 @@
 # - young slab being subducted
 # - flat subduction
 
+# Important model parameters could be the position (parameter "x_plume" in
+# the subsections Boundary velocity model and Boundary temperature model;
+# you will need to change both together so that material flows into the 
+# model at the same location where the temperature is increased) 
+# and temperature (parameter "T_plume" in the subsection Boundary temperature 
+# model) of the plume, but also the strength of the subducting plate 
+# (third value in the lists of "Prefactors for diffusion creep" and 
+# "Activation energies for diffusion creep", this is explained in more detail
+# in the Material model subsection). 
+
 set Dimension                              = 2
 set Start time                             = 0
-set End time                               = 3.8e7
+set End time                               = 4.7e7
 set CFL number                             = 1.0
 set Use years in output instead of seconds = true
 set Output directory                       = cascadia
@@ -18,8 +28,8 @@ set Resume computation                     = true
 # is met. 
 set Nonlinear solver scheme                = single Advection, iterated Stokes
 
-set Nonlinear solver tolerance             = 1e-4
-set Max nonlinear iterations               = 5
+set Nonlinear solver tolerance             = 5e-4
+set Max nonlinear iterations               = 30
 set Max nonlinear iterations in pre-refinement = 0
 
 # Each inner iteration is solved up to this linear
@@ -28,15 +38,12 @@ subsection Solver parameters
   subsection Stokes solver parameters
     set Linear solver tolerance                = 1e-4
     set Number of cheap Stokes solver steps    = 1500
-    set GMRES solver restart length            = 500
-    set Stokes solver type                     = block GMG
-    set Maximum number of expensive Stokes solver steps = 0
+    set GMRES solver restart length        = 300
   end
 end
 
 
 set Adiabatic surface temperature          = 1573
-
 
 
 # A rectangular box of 2700x660 km
@@ -46,7 +53,7 @@ subsection Geometry model
       set X extent = 2700000
       set Y extent = 660000
       set X repetitions = 8
-      set Lithospheric thickness = 200000
+      set Lithospheric thickness = 330000
   end
 end
 
@@ -60,13 +67,6 @@ subsection Gravity model
 end
 
 
-# We refine based on the Kelly error estimate of composition and
-# the approximated gradient of viscosity. Also, by setting
-# individual minimum and maximum refinement levels for each
-# compositional field, we have precise control on the refinement.
-# The mesh is adapted every 20
-# timesteps, such that the outline of the plates and the crust
-# itself are well refined. 
 subsection Mesh refinement
   set Initial adaptive refinement        = 2
   set Initial global refinement          = 3
@@ -90,7 +90,8 @@ end
 # Slab dip angle, trench position and plate ages
 # can be varied.
 subsection Initial temperature model
-  set List of model names =  adiabatic , function
+  set List of model names = adiabatic, function
+
   subsection Adiabatic
     set Age top boundary layer = 0
     set Age bottom boundary layer = 0
@@ -102,7 +103,6 @@ subsection Initial temperature model
 
   subsection Function
     set Function constants =y0=660000, slab_dip=10, x_trench=1700000.0, Ts=293, Tm=1573, age=2e15, x0=-150000, yr_in_s=3.16e7
-
     set Function expression = \
       if (y0-y < tan(slab_dip*3.1416/180.)*(x-x_trench) && y0-y <= (2.32*sqrt(1.0e-6*age)), \
       (Ts-Tm)*(y-y0+2.32*sqrt(1.0e-6*age))/(2.32*sqrt(1.0e-6*age)), 0) \
@@ -132,19 +132,20 @@ subsection Boundary temperature model
 
   subsection Function
     set Function constants = x_plume=1800000, plume_width=100000, T_plume=200
-    set Function expression = T_plume*exp(-((x-x_plume)^2+y^2)/plume_width^2) + 1740
+    set Function expression = T_plume*exp(-((x-x_plume)^2+y^2)/plume_width^2)
   end
 end
 
-# The bottom boundary is no slip, mimicking the 660 phase transition
-# boundary, all other boundaries are free slip.
+# The bottom boundary is no slip (except for the inflow of the plume),
+# mimicking the 660 phase transition boundary, 
+# all other boundaries are free slip.
 subsection Boundary velocity model
   set Tangential velocity boundary indicators = left, top, left lithosphere, right
   set Prescribed velocity boundary indicators = bottom:function
 
   subsection Function
     set Function constants = x_plume=1800000, plume_width=100000, T_plume=200
-    set Function expression = 0;if(t>5e7,0.1*exp(-(x-x_plume)^2/plume_width^2),0)
+    set Function expression = 0;0.1*exp(-(x-x_plume)^2/plume_width^2)
   end
 end
 
@@ -164,7 +165,7 @@ end
 
 subsection Material model
   set Model name = visco plastic
-  set Material averaging = harmonic average only viscosity # log average
+  set Material averaging = log average
 
   subsection Visco Plastic
 
@@ -200,8 +201,14 @@ subsection Material model
     set Activation energies for dislocation creep = 5.3e5,54e4,54e4,0
     set Activation volumes for dislocation creep  = 1.4e-5,20e-6,20e-6,0 
 
-    set Prefactors for diffusion creep            = 1.5e-16, 5e-18, 5e-27, 1e-27
-    set Activation energies for diffusion creep   = 3.75e5,3.75e5,3.75e5,0
+    # The third value in these lists determines the strength of the subducted
+    # lithosphere. The current values lead to a very weak slab (weaker than 
+    # what is realistic, just to demonstrate the effect). The original 
+    # parameters used to create the subducted slab were 5e-27 (instead of 5e-22) 
+    # for the Prefactors for diffusion creep, and 3.75e5 (instead of 1.75e5)
+    # for the Activation energies for diffusion creep. 
+    set Prefactors for diffusion creep            = 1.5e-16, 5e-18, 5e-22, 1e-27
+    set Activation energies for diffusion creep   = 3.75e5,3.75e5,1.75e5,0
     set Activation volumes for diffusion creep    = 4.9e-6,4e-6,4e-6,0
 
     # Plasticity parameters
@@ -210,7 +217,6 @@ subsection Material model
 
   end
 end
-
 
 subsection Initial composition model
   set Model name = function
@@ -252,9 +258,5 @@ subsection Discretization
     set Global composition maximum = 1,1,1
     set Global composition minimum = 0,0,0
   end
-end
-
-subsection Termination criteria
-  set Checkpoint on termination = true
 end
 

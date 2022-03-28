@@ -154,7 +154,7 @@ subsection Boundary velocity model
 
   subsection Function
     set Function constants = x_plume=1800000, plume_width=100000, T_plume=200
-    set Function expression = 0;if(t>5e7,0.1*exp(-(x-x_plume)^2/plume_width^2),0)
+    set Function expression = 0;0.1*exp(-(x-x_plume)^2/plume_width^2)
   end
 end
 
@@ -263,8 +263,3 @@ subsection Discretization
     set Global composition minimum = 0,0,0
   end
 end
-
-subsection Termination criteria
-  set Checkpoint on termination = true
-end
-

@@ -16,7 +16,7 @@
 
 set Dimension                              = 2
 set Start time                             = 0
-set End time                               = 4.5e7
+set End time                               = 4.1e7
 set CFL number                             = 1.0
 set Use years in output instead of seconds = true
 set Output directory                       = cascadia
@@ -210,6 +210,12 @@ subsection Material model
     set Activation energies for dislocation creep = 5.3e5,54e4,54e4,0
     set Activation volumes for dislocation creep  = 1.4e-5,20e-6,20e-6,0 
 
+    # The third value in these lists determines the strength of the subducted
+    # lithosphere. The current values lead to a very weak slab (weaker than 
+    # what is realistic, just to demonstrate the effect). The original 
+    # parameters used to create the subducted slab were 5e-27 (instead of 5e-22) 
+    # for the Prefactors for diffusion creep, and 3.75e5 (instead of 1.75e5)
+    # for the Activation energies for diffusion creep. 
     set Prefactors for diffusion creep            = 1.5e-16, 5e-18, 5e-27, 1e-27
     set Activation energies for diffusion creep   = 3.75e5,3.75e5,3.75e5,0
     set Activation volumes for diffusion creep    = 4.9e-6,4e-6,4e-6,0
@@ -242,12 +248,12 @@ subsection Initial composition model
 end
 
 
-# We output visualization files every 100,000 years.
+# We output visualization files every 10,000 years.
 subsection Postprocess
   set List of postprocessors = visualization, velocity statistics, temperature statistics
 
   subsection Visualization
-    set Time between graphical output = 1e5 
+    set Time between graphical output = 2e4 
     set List of output variables      = strain rate, material properties, melt fraction
     set Interpolate output            = true
   end
